@@ -11,7 +11,7 @@
 #include "AGGView.h"
 
 MainWindow::MainWindow(void)
-    : BWindow(BRect(100, 100, 500, 400), "Main Window", B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS, B_CURRENT_WORKSPACE) {
+    : BWindow(BRect(100, 100, 600, 600), "Main Window", B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS, B_CURRENT_WORKSPACE) {
     BRect r(Bounds());
     r.bottom = 20;
     menuBar = new BMenuBar(r, "menubar");
@@ -21,21 +21,27 @@ MainWindow::MainWindow(void)
     menu->AddItem(new BMenuItem("Quit", new BMessage(M_QUIT_APP), 'Q'));
     menuBar->AddItem(menu);
 
-    r.Set(5, 5, 255, 55);
-    sizeSlider = new BSlider(r, NULL, "Size", NULL, 0, 100);
-    AddChild(sizeSlider);
-
-    r.Set(5, 50, 255, 55);
-    selectivitySlider = new BSlider(r, NULL, "Selectivity", NULL, 0, 100);
-    AddChild(selectivitySlider);
-
-    r.Set(10, 120, 319, 239);
+    r.Set(0, 40, 500, 500);
     aggView = new AGGView(r);
     AddChild(aggView);
+
+    r.Set(5, 40, 255, 55);
+    sizeSlider = new BSlider(r, NULL, "Size", new BMessage(SIZE_SLIDER), 0, 1);
+    AddChild(sizeSlider);
+
+    r.Set(5, 80, 255, 55);
+    selectivitySlider = new BSlider(r, NULL, "Selectivity", new BMessage(SELECTIVITY_SLIDER), 0, 1);
+    AddChild(selectivitySlider);
 }
 
 void MainWindow::MessageReceived(BMessage *msg) {
     switch (msg->what) {
+        case SIZE_SLIDER: {
+            break;
+        }
+        case SELECTIVITY_SLIDER: {
+            break;
+        }
         case M_QUIT_APP: {
             // this won't work because you need to dispatch another message, say REALLY_QUIT to avoid triggering the alert...
             // BAlert *alert = new BAlert("Quit?", "Are you sure you want to quit?", "OK", "Cancel", NULL, B_WIDTH_AS_USUAL, B_INFO_ALERT);

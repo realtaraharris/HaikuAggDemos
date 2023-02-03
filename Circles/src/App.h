@@ -10,7 +10,9 @@ public:
 
 enum {
     ASDF='asf',
-    M_QUIT_APP='mqa'
+    M_QUIT_APP='mqa',
+    SIZE_SLIDER='sizs',
+    SELECTIVITY_SLIDER='sels'
 };
 
 #endif

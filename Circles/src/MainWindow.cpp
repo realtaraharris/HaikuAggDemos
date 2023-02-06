@@ -11,8 +11,9 @@
 #include "AGGView.h"
 
 MainWindow::MainWindow(void)
-    : BWindow(BRect(100, 100, 600, 600), "Main Window", B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS, B_CURRENT_WORKSPACE) {
+    : BWindow(BRect(100, 100, 600, 800), "Main Window", B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS, B_CURRENT_WORKSPACE) {
     BRect r(Bounds());
+
     r.bottom = 20;
     menuBar = new BMenuBar(r, "menubar");
     AddChild(menuBar);
@@ -21,25 +22,40 @@ MainWindow::MainWindow(void)
     menu->AddItem(new BMenuItem("Quit", new BMessage(M_QUIT_APP), 'Q'));
     menuBar->AddItem(menu);
 
-    r.Set(0, 40, 500, 500);
+    r.Set(0, 20, 500, 520);
     aggView = new AGGView(r);
     AddChild(aggView);
 
-    r.Set(5, 40, 255, 55);
-    sizeSlider = new BSlider(r, NULL, "Size", new BMessage(SIZE_SLIDER), 0, 1);
+    r.Set(5, 520, 255, 55);
+    sizeSlider = new BSlider(r, NULL, "Size", new BMessage(SIZE_SLIDER), 20, 120);
     AddChild(sizeSlider);
 
-    r.Set(5, 80, 255, 55);
-    selectivitySlider = new BSlider(r, NULL, "Selectivity", new BMessage(SELECTIVITY_SLIDER), 0, 1);
+    r.Set(5, 560, 255, 55);
+    selectivitySlider = new BSlider(r, NULL, "Selectivity", new BMessage(SELECTIVITY_SLIDER), 0, 20);
     AddChild(selectivitySlider);
+
+    r.Set(5, 600, 100, 55);
+    generateButton = new BButton(r, NULL, "Generate Points", new BMessage(GENERATE_BUTTON));
+    AddChild(generateButton);
+
+    mainWindowRect = Bounds();
 }
 
 void MainWindow::MessageReceived(BMessage *msg) {
     switch (msg->what) {
         case SIZE_SLIDER: {
+            aggView->circleDiameter = sizeSlider->Value();
+            aggView->Draw(BRect(0, 20, 500, 520));
             break;
         }
         case SELECTIVITY_SLIDER: {
+            aggView->selectivity = selectivitySlider->Value();
+            aggView->Draw(BRect(0, 20, 500, 520));
+            break;
+        }
+        case GENERATE_BUTTON: {
+            aggView->generate();
+            aggView->Draw(BRect(0, 20, 500, 520));
             break;
         }
         case M_QUIT_APP: {

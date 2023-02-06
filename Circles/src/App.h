@@ -12,7 +12,8 @@ enum {
     ASDF='asf',
     M_QUIT_APP='mqa',
     SIZE_SLIDER='sizs',
-    SELECTIVITY_SLIDER='sels'
+    SELECTIVITY_SLIDER='sels',
+    GENERATE_BUTTON='gbtn'
 };
 
 #endif

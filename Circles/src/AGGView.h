@@ -37,15 +37,22 @@ public:
     AGGView(BRect r);
     ~AGGView();
     void Draw(BRect updateRect);
+    void FrameResized(float width, float height);
     void generate();
-    BBitmap* renderCircles(BRect r, unsigned m_num_points, unsigned m_scale_ctrl_z_value1, unsigned m_scale_ctrl_z_value2, unsigned m_slider_ctrl_sel_value, unsigned m_slider_ctrl_size_value);
+    BBitmap* renderCircles(BRect r, unsigned m_scale_ctrl_z_value1, unsigned m_scale_ctrl_z_value2);
+
+	unsigned circleDiameter;
+	unsigned selectivity;
 private:
-    unsigned m_num_points;
+    unsigned pointCount;
     scatter_point* m_points;
 
     agg::bspline m_spline_r;
     agg::bspline m_spline_g;
     agg::bspline m_spline_b;
+
+    unsigned initial_height;
+    unsigned initial_width;
 };
 
 #endif // ELLIPSE_H

@@ -13,9 +13,8 @@ public:
     MainWindow(void);
     void MessageReceived(BMessage *msg);
     bool QuitRequested(void);
-    BRect mainWindowRect;
-
 private:
+    BRect mainWindowRect;
     BMenuBar *menuBar;
     BWindow *toolWindow;
     BSlider *sizeSlider;

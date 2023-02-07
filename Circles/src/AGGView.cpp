@@ -2,23 +2,33 @@
 #include <Bitmap.h>
 #include "AGGView.h"
 
-AGGView::AGGView(BRect rect) : BView(rect, "AGG View", B_FOLLOW_ALL_SIDES, B_FRAME_EVENTS | B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE), pointCount(2000), circleDiameter(20), selectivity(0) {
-    m_points = new scatter_point[pointCount];
+double randomDouble(double start, double end) {
+    unsigned r = rand() & 0x7FFF;
+    return double(r) * (end - start) / 32768.0 + start;
+}
 
-    m_spline_r.init(6, spline_r_x, spline_r_y);
-    m_spline_g.init(6, spline_g_x, spline_g_y);
-    m_spline_b.init(6, spline_b_x, spline_b_y);
+AGGView::AGGView(BRect rect) :
+	BView(rect, "AGG View", B_FOLLOW_ALL_SIDES, B_FRAME_EVENTS | B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE),
+	pointCount(2000),
+	circleDiameter(20),
+	selectivity(0),
+	z1(1),
+	z2(1) {
+    scatterPoints = new ScatterPoint[pointCount];
+
+    splineR.init(6, splineRX, splineRY);
+    splineG.init(6, splineGX, splineGY);
+    splineB.init(6, splineBX, splineBY);
 
     initialRect = rect;
     currentRect = rect;
 
-    trans_affine_resizing(rect.Width(), rect.Height(), true);
-
-    this->generate();
+    SetTransAffineResizingMatrix(rect.Width(), rect.Height(), true);
+    GeneratePoints();
 }
 
 AGGView::~AGGView() {
-    delete [] m_points;
+    delete [] scatterPoints;
 }
 
 /*
@@ -33,52 +43,46 @@ void AGGView::DetachedFromWindow() {}
 */
 
 void AGGView::Draw(BRect updateRect) {
-    BBitmap* bitmap = renderCircles(updateRect, 1.0, 1.0);
+    BBitmap* bitmap = RenderCircles(updateRect);
     DrawBitmap(bitmap, updateRect, updateRect);
     delete bitmap;
 }
 
+// this is never actually called in this example because nothing moves the view frame
 void AGGView::FrameMoved(BPoint newLocation) {
     currentRect.SetLeftTop(newLocation);
 }
 
 void AGGView::FrameResized(float width, float height) {
     currentRect.SetRightBottom(initialRect.LeftTop() + BPoint(width, height));
-    trans_affine_resizing(width + 1, height + 1, true);
+    SetTransAffineResizingMatrix(width + 1, height + 1, true);
     Draw(currentRect);
 }
 
-double random_dbl(double start, double end) {
-    unsigned r = rand() & 0x7FFF;
-    return double(r) * (end - start) / 32768.0 + start;
-}
-
-void AGGView::generate() {
-    unsigned i;
-
+void AGGView::GeneratePoints() {
     double width = initialRect.Width();
     double height = initialRect.Height();
-    double rx = width/3.5;
-    double ry = height/3.5;
+    double rx = width / 3.5;
+    double ry = height / 3.5;
 
-    for(i = 0; i < pointCount; i++) {
-        double z = m_points[i].z = random_dbl(0.0, 1.0);
+    for (unsigned i = 0; i < pointCount; i++) {
+        double z = scatterPoints[i].z = randomDouble(0.0, 1.0);
         double x = cos(z * 2.0 * agg::pi) * rx;
         double y = sin(z * 2.0 * agg::pi) * ry;
 
-        double dist  = random_dbl(0.0, rx/2.0);
-        double angle = random_dbl(0.0, agg::pi * 2.0);
+        double dist  = randomDouble(0.0, rx / 2.0);
+        double angle = randomDouble(0.0, agg::pi * 2.0);
 
-        m_points[i].x = width/2.0  + x + cos(angle) * dist;
-        m_points[i].y = height/2.0 + y + sin(angle) * dist;
-        m_points[i].color = agg::rgba(m_spline_r.get(z)*0.8,
-                                      m_spline_g.get(z)*0.8,
-                                      m_spline_b.get(z)*0.8,
+        scatterPoints[i].x = width / 2.0  + x + cos(angle) * dist;
+        scatterPoints[i].y = height / 2.0 + y + sin(angle) * dist;
+        scatterPoints[i].color = agg::rgba(splineR.get(z) * 0.8,
+                                      splineG.get(z) * 0.8,
+                                      splineB.get(z) * 0.8,
                                       1.0);
     }
 }
 
-void AGGView::trans_affine_resizing(unsigned width, unsigned height, bool keepAspectRatio) {
+void AGGView::SetTransAffineResizingMatrix(unsigned width, unsigned height, bool keepAspectRatio) {
     if (keepAspectRatio) {
         agg::trans_viewport vp;
         vp.preserve_aspect_ratio(0.5, 0.5, agg::aspect_ratio_meet);
@@ -92,12 +96,12 @@ void AGGView::trans_affine_resizing(unsigned width, unsigned height, bool keepAs
     }
 }
 
-const agg::trans_affine& AGGView::trans_affine_resizing() const {
+const agg::trans_affine& AGGView::GetTransAffineResizingMatrix() const {
     return resizeMatrix;
 }
 
-BBitmap* AGGView::renderCircles(BRect r, unsigned m_scale_ctrl_z_value1, unsigned m_scale_ctrl_z_value2) {
-    BBitmap* bitmap = new BBitmap(r, 0, B_RGBA32);
+BBitmap* AGGView::RenderCircles(BRect rect) {
+    BBitmap* bitmap = new BBitmap(rect, 0, B_RGBA32);
 
     agg::rendering_buffer buffer;
     buffer.attach((uint8*)bitmap->Bits(),
@@ -118,34 +122,27 @@ BBitmap* AGGView::renderCircles(BRect r, unsigned m_scale_ctrl_z_value1, unsigne
 
     agg::ellipse e1;
 
-    const agg::trans_affine resize_mtx = trans_affine_resizing();
+    const agg::trans_affine resize_mtx = GetTransAffineResizingMatrix();
     agg::conv_transform<agg::ellipse> t1(e1, resize_mtx);
 
-    unsigned i;
-    unsigned n_drawn = 0;
-    for(i = 0; i < pointCount; i++) {
-        double z = m_points[i].z;
+    unsigned circlesDrawn = 0;
+    for (unsigned i = 0; i < pointCount; i++) {
+        double z = scatterPoints[i].z;
         double alpha = 1.0;
-        if(z < m_scale_ctrl_z_value1) {
-            alpha =
-                1.0 -
-                (m_scale_ctrl_z_value1 - z) *
-                selectivity;
+        if (z < z1) {
+            alpha = 1.0 - (z1 - z) * selectivity;
         }
 
-        if(z > m_scale_ctrl_z_value2) {
-            alpha =
-                1.0 -
-                (z - m_scale_ctrl_z_value2) *
-                selectivity;
+        if (z > z2) {
+            alpha = 1.0 - (z - z2) * selectivity;
         }
 
-        if(alpha > 1.0) alpha = 1.0;
-        if(alpha < 0.0) alpha = 0.0;
+        if (alpha > 1.0) alpha = 1.0;
+        if (alpha < 0.0) alpha = 0.0;
 
-        if(alpha > 0.0) {
-            e1.init(m_points[i].x,
-                    m_points[i].y,
+        if (alpha > 0.0) {
+            e1.init(scatterPoints[i].x,
+                    scatterPoints[i].y,
                     circleDiameter / 20,
                     circleDiameter / 20,
                     8);
@@ -153,24 +150,24 @@ BBitmap* AGGView::renderCircles(BRect r, unsigned m_scale_ctrl_z_value1, unsigne
 
             agg::render_scanlines_aa_solid(
                 pf, sl, rb,
-                agg::rgba(m_points[i].color.r,
-                          m_points[i].color.g,
-                          m_points[i].color.b,
+                agg::rgba(scatterPoints[i].color.r,
+                          scatterPoints[i].color.g,
+                          scatterPoints[i].color.b,
                           alpha));
-            n_drawn++;
+            circlesDrawn++;
         }
     }
 
     char buf[10];
-    sprintf(buf, "%08u", n_drawn);
+    sprintf(buf, "%08u", circlesDrawn);
 
-    agg::gsv_text txt;
-    txt.size(15.0);
-    txt.text(buf);
-    txt.start_point(10.0, (initialRect.Height() - 20.0) * 1);
-    agg::gsv_text_outline<> txt_o(txt, trans_affine_resizing());
-    pf.add_path(txt_o);
-    agg::render_scanlines_aa_solid(pf, sl, rb, agg::rgba(0,0,0));
+    agg::gsv_text text;
+    text.size(15.0);
+    text.text(buf);
+    text.start_point(10.0, initialRect.Height() - 20.0);
+    agg::gsv_text_outline<> textOutline(text, GetTransAffineResizingMatrix());
+    pf.add_path(textOutline);
+    agg::render_scanlines_aa_solid(pf, sl, rb, agg::rgba(0, 0, 0));
 
     return bitmap;
 }

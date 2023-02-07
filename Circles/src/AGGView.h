@@ -15,6 +15,7 @@
 #include "agg_renderer_scanline.h"
 #include "agg_path_storage.h"
 #include "agg_pixfmt_rgba.h"
+#include "agg_trans_viewport.h"
 
 struct scatter_point {
     double     x;
@@ -36,13 +37,18 @@ class AGGView : public BView {
 public:
     AGGView(BRect r);
     ~AGGView();
+//  void AttachedToWindow();
+//  void DetachedFromWindow();
     void Draw(BRect updateRect);
+    void FrameMoved(BPoint newLocation);
     void FrameResized(float width, float height);
+    const agg::trans_affine& trans_affine_resizing() const;
+    void trans_affine_resizing(unsigned width, unsigned height, bool window_keep_aspect_ratio);
     void generate();
     BBitmap* renderCircles(BRect r, unsigned m_scale_ctrl_z_value1, unsigned m_scale_ctrl_z_value2);
 
-	unsigned circleDiameter;
-	unsigned selectivity;
+    unsigned circleDiameter;
+    unsigned selectivity;
 private:
     unsigned pointCount;
     scatter_point* m_points;
@@ -51,8 +57,9 @@ private:
     agg::bspline m_spline_g;
     agg::bspline m_spline_b;
 
-    unsigned initial_height;
-    unsigned initial_width;
+    BRect initialRect;
+    BRect currentRect;
+    agg::trans_affine resizeMatrix;
 };
 
 #endif // ELLIPSE_H

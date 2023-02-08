@@ -39,13 +39,14 @@ public:
     ~AGGView();
 //  void AttachedToWindow();
 //  void DetachedFromWindow();
+    void InitBitmapAndBuffer();
     void Draw(BRect updateRect);
     void FrameMoved(BPoint newLocation);
     void FrameResized(float width, float height);
     const agg::trans_affine& GetTransAffineResizingMatrix() const;
     void SetTransAffineResizingMatrix(unsigned width, unsigned height, bool keepAspectRatio);
     void GeneratePoints();
-    BBitmap* RenderCircles(BRect rect);
+    void RenderCircles(BRect rect);
 
     unsigned circleDiameter;
     unsigned selectivity;
@@ -60,6 +61,8 @@ private:
     BRect initialRect;
     BRect currentRect;
     agg::trans_affine resizeMatrix;
+    BBitmap* retainedBitmap;
+    agg::rendering_buffer buffer;
 };
 
 #endif // ELLIPSE_H

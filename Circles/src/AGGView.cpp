@@ -7,6 +7,14 @@ double randomDouble(double start, double end) {
     return double(r) * (end - start) / 32768.0 + start;
 }
 
+void attachBufferToBBitmap(agg::rendering_buffer& buffer, BBitmap* bitmap) {
+    uint8* bits = (uint8*)bitmap->Bits();
+    uint32 width = bitmap->Bounds().IntegerWidth() + 1;
+    uint32 height = bitmap->Bounds().IntegerHeight() + 1;
+    int32 bpr = bitmap->BytesPerRow();
+    buffer.attach(bits, width, height, -bpr);
+}
+
 AGGView::AGGView(BRect rect) :
 	BView(rect, "AGG View", B_FOLLOW_ALL_SIDES, B_FRAME_EVENTS | B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE),
 	pointCount(2000),
@@ -25,10 +33,22 @@ AGGView::AGGView(BRect rect) :
 
     SetTransAffineResizingMatrix(rect.Width(), rect.Height(), true);
     GeneratePoints();
+
+    InitBitmapAndBuffer();
 }
 
 AGGView::~AGGView() {
     delete [] scatterPoints;
+}
+
+void AGGView::InitBitmapAndBuffer() {
+    retainedBitmap = new BBitmap(currentRect, 0, B_RGBA32);
+    if (retainedBitmap->IsValid()) {
+        attachBufferToBBitmap(buffer, retainedBitmap);
+    } else {
+        delete retainedBitmap;
+        retainedBitmap = NULL;
+    }
 }
 
 /*
@@ -43,9 +63,8 @@ void AGGView::DetachedFromWindow() {}
 */
 
 void AGGView::Draw(BRect updateRect) {
-    BBitmap* bitmap = RenderCircles(updateRect);
-    DrawBitmap(bitmap, updateRect, updateRect);
-    delete bitmap;
+    RenderCircles(updateRect);
+    DrawBitmap(retainedBitmap, updateRect, updateRect);
 }
 
 // this is never actually called in this example because nothing moves the view frame
@@ -56,6 +75,7 @@ void AGGView::FrameMoved(BPoint newLocation) {
 void AGGView::FrameResized(float width, float height) {
     currentRect.SetRightBottom(initialRect.LeftTop() + BPoint(width, height));
     SetTransAffineResizingMatrix(width + 1, height + 1, true);
+    InitBitmapAndBuffer(); // do this before drawing
     Draw(currentRect);
 }
 
@@ -100,15 +120,7 @@ const agg::trans_affine& AGGView::GetTransAffineResizingMatrix() const {
     return resizeMatrix;
 }
 
-BBitmap* AGGView::RenderCircles(BRect rect) {
-    BBitmap* bitmap = new BBitmap(rect, 0, B_RGBA32);
-
-    agg::rendering_buffer buffer;
-    buffer.attach((uint8*)bitmap->Bits(),
-                  bitmap->Bounds().IntegerWidth() + 1,
-                  bitmap->Bounds().IntegerHeight() + 1,
-                  - bitmap->BytesPerRow());
-
+void AGGView::RenderCircles(BRect rect) {
     agg::rasterizer_scanline_aa<> pf;
     agg::scanline_p8 sl;
 
@@ -168,6 +180,4 @@ BBitmap* AGGView::RenderCircles(BRect rect) {
     agg::gsv_text_outline<> textOutline(text, GetTransAffineResizingMatrix());
     pf.add_path(textOutline);
     agg::render_scanlines_aa_solid(pf, sl, rb, agg::rgba(0, 0, 0));
-
-    return bitmap;
 }

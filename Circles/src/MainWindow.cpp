@@ -22,7 +22,7 @@ MainWindow::MainWindow(void) :
     menu->AddItem(new BMenuItem("Quit", new BMessage(M_QUIT_APP), 'Q'));
     menuBar->AddItem(menu);
 
-    rect.Set(0, 20, 500, 520);
+    rect.Set(0, 22, 500, 520);
     aggView = new AGGView(rect);
     AddChild(aggView);
 
@@ -45,17 +45,17 @@ void MainWindow::MessageReceived(BMessage *message) {
     switch (message->what) {
         case SIZE_SLIDER: {
             aggView->circleDiameter = sizeSlider->Value();
-            aggView->Draw(BRect(0, 20, 500, 520));
+            aggView->Invalidate();
             break;
         }
         case SELECTIVITY_SLIDER: {
             aggView->selectivity = selectivitySlider->Value();
-            aggView->Draw(BRect(0, 20, 500, 520));
+            aggView->Invalidate();
             break;
         }
         case GENERATE_BUTTON: {
             aggView->GeneratePoints();
-            aggView->Draw(BRect(0, 20, 500, 520));
+            aggView->Invalidate();
             break;
         }
         case M_QUIT_APP: {

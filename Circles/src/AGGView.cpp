@@ -17,7 +17,7 @@ void attachBufferToBBitmap(agg::rendering_buffer& buffer, BBitmap* bitmap) {
 
 AGGView::AGGView(BRect rect) :
 	BView(rect, "AGG View", B_FOLLOW_ALL_SIDES, B_FRAME_EVENTS | B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE),
-	pointCount(2000),
+	pointCount(10000),
 	circleDiameter(20),
 	selectivity(0),
 	z1(1),

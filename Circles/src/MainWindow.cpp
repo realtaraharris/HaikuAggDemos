@@ -5,16 +5,19 @@
 #include <MenuItem.h>
 #include <View.h>
 #include <Alert.h> // BAlert
+#include <GroupLayout.h>
+#include <GroupLayoutBuilder.h>
+#include <Box.h>
+
 #include "App.h" // contains message enums
 
 #include "MainWindow.h"
 #include "AGGView.h"
 
 MainWindow::MainWindow(void) :
-    BWindow(BRect(100, 100, 600, 800), "Main Window", B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS, B_CURRENT_WORKSPACE) {
+    BWindow(BRect(100, 100, 400, 600), "Main Window", B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS, B_CURRENT_WORKSPACE) {
     BRect rect(Bounds());
 
-    rect.bottom = 20;
     menuBar = new BMenuBar(rect, "menubar");
     AddChild(menuBar);
 
@@ -22,23 +25,32 @@ MainWindow::MainWindow(void) :
     menu->AddItem(new BMenuItem("Quit", new BMessage(M_QUIT_APP), 'Q'));
     menuBar->AddItem(menu);
 
-    rect.Set(0, 22, 500, 520);
+    rect.Set(0, 0, 300, 300);
     aggView = new AGGView(rect);
-    AddChild(aggView);
 
-    rect.Set(5, 520, 255, 55);
+    rect.Set(0, 0, 1, 1);
     sizeSlider = new BSlider(rect, NULL, "Size", new BMessage(SIZE_SLIDER), 20, 120);
-    AddChild(sizeSlider);
 
-    rect.Set(5, 560, 255, 55);
+    rect.Set(0, 0, 1, 1);
     selectivitySlider = new BSlider(rect, NULL, "Selectivity", new BMessage(SELECTIVITY_SLIDER), 0, 20);
-    AddChild(selectivitySlider);
 
-    rect.Set(5, 600, 100, 55);
+    rect.Set(0, 0, 1, 1);
     generateButton = new BButton(rect, NULL, "Generate Points", new BMessage(GENERATE_BUTTON));
-    AddChild(generateButton);
 
     mainWindowRect = Bounds();
+
+    BBox* divider = new BBox(BRect(0, 0, 1, 1), B_EMPTY_STRING, B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS, B_FANCY_BORDER);
+    SetLayout(new BGroupLayout(B_VERTICAL));
+
+    AddChild(BGroupLayoutBuilder(B_VERTICAL)
+        .Add(aggView)
+        .Add(BGroupLayoutBuilder(B_VERTICAL)
+            .Add(sizeSlider)
+            .Add(selectivitySlider)
+            .Add(generateButton)
+            .SetInsets(5, 5, 5, 5)
+        )
+    );
 }
 
 void MainWindow::MessageReceived(BMessage *message) {

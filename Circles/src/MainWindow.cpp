@@ -29,10 +29,10 @@ MainWindow::MainWindow(void) :
     aggView = new AGGView(rect);
 
     rect.Set(0, 0, 1, 1);
-    sizeSlider = new BSlider(rect, NULL, "Size", new BMessage(SIZE_SLIDER), 20, 120);
+    sizeSlider = new SmoothSlider(rect, NULL, "Size", new BMessage(SIZE_SLIDER), 20, 120, B_TRIANGLE_THUMB);
 
     rect.Set(0, 0, 1, 1);
-    selectivitySlider = new BSlider(rect, NULL, "Selectivity", new BMessage(SELECTIVITY_SLIDER), 0, 20);
+    selectivitySlider = new SmoothSlider(rect, NULL, "Selectivity", new BMessage(SELECTIVITY_SLIDER), 0, 100, B_TRIANGLE_THUMB);
 
     rect.Set(0, 0, 1, 1);
     generateButton = new BButton(rect, NULL, "Generate Points", new BMessage(GENERATE_BUTTON));

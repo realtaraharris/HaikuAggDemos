@@ -3,10 +3,10 @@
 
 #include <Window.h>
 #include <MenuBar.h>
-#include <Slider.h>
 #include <Button.h>
 
 #include "AGGView.h"
+#include "SmoothSlider.h"
 
 class MainWindow : public BWindow {
 public:
@@ -17,8 +17,8 @@ private:
     BRect mainWindowRect;
     BMenuBar *menuBar;
     BWindow *toolWindow;
-    BSlider *sizeSlider;
-    BSlider *selectivitySlider;
+    SmoothSlider *sizeSlider;
+    SmoothSlider *selectivitySlider;
     BButton *generateButton;
     AGGView* aggView;
 };

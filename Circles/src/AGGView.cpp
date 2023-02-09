@@ -17,7 +17,7 @@ void attachBufferToBBitmap(agg::rendering_buffer& buffer, BBitmap* bitmap) {
 
 AGGView::AGGView(BRect rect) :
 	BView(rect, "AGG View", B_FOLLOW_ALL_SIDES, B_FRAME_EVENTS | B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE),
-	pointCount(10000),
+	pointCount(2000),
 	circleDiameter(20),
 	selectivity(0),
 	z1(1),
@@ -142,11 +142,11 @@ void AGGView::RenderCircles(BRect rect) {
         double z = scatterPoints[i].z;
         double alpha = 1.0;
         if (z < z1) {
-            alpha = 1.0 - (z1 - z) * selectivity;
+            alpha = 1.0 - (z1 - z) * (float(selectivity) / 10);
         }
 
         if (z > z2) {
-            alpha = 1.0 - (z - z2) * selectivity;
+            alpha = 1.0 - (z - z2) * (float(selectivity) / 10);
         }
 
         if (alpha > 1.0) alpha = 1.0;
@@ -155,8 +155,8 @@ void AGGView::RenderCircles(BRect rect) {
         if (alpha > 0.0) {
             e1.init(scatterPoints[i].x,
                     scatterPoints[i].y,
-                    circleDiameter / 20,
-                    circleDiameter / 20,
+                    (float)circleDiameter / 20,
+                    (float)circleDiameter / 20,
                     8);
             pf.add_path(t1);
 

@@ -10,6 +10,7 @@ add_executable(Circles
 	src/App.cpp
 	src/MainWindow.cpp
 	src/AGGView.cpp
+	src/SmoothSlider.cpp
 )
 
 set_property(TARGET Circles PROPERTY CXX_STANDARD 11)

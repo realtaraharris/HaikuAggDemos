@@ -1,3 +1,7 @@
+/*
+ * Copyright 2023, Tara Harris <3769985+realtaraharris@users.noreply.github.com>
+ * All rights reserved. Distributed under the terms of the MIT license.
+ */
 #include <iostream>
 
 #include <Application.h>
@@ -12,7 +16,7 @@
 #include "App.h" // contains message enums
 
 #include "MainWindow.h"
-#include "AGGView.h"
+#include "CirclesView.h"
 
 MainWindow::MainWindow(void) :
     BWindow(BRect(100, 100, 400, 600), "Main Window", B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS, B_CURRENT_WORKSPACE) {
@@ -26,7 +30,7 @@ MainWindow::MainWindow(void) :
     menuBar->AddItem(menu);
 
     rect.Set(0, 0, 300, 300);
-    aggView = new AGGView(rect);
+    circlesView = new CirclesView(rect);
 
     rect.Set(0, 0, 1, 1);
     sizeSlider = new SmoothSlider(rect, NULL, "Size", new BMessage(SIZE_SLIDER), 20, 120, B_TRIANGLE_THUMB);
@@ -43,7 +47,7 @@ MainWindow::MainWindow(void) :
     SetLayout(new BGroupLayout(B_VERTICAL));
 
     AddChild(BGroupLayoutBuilder(B_VERTICAL)
-        .Add(aggView)
+        .Add(circlesView)
         .Add(BGroupLayoutBuilder(B_VERTICAL)
             .Add(sizeSlider)
             .Add(selectivitySlider)
@@ -56,18 +60,18 @@ MainWindow::MainWindow(void) :
 void MainWindow::MessageReceived(BMessage *message) {
     switch (message->what) {
         case SIZE_SLIDER: {
-            aggView->circleDiameter = sizeSlider->Value();
-            aggView->Invalidate();
+            circlesView->circleDiameter = sizeSlider->Value();
+            circlesView->Invalidate();
             break;
         }
         case SELECTIVITY_SLIDER: {
-            aggView->selectivity = selectivitySlider->Value();
-            aggView->Invalidate();
+            circlesView->selectivity = selectivitySlider->Value();
+            circlesView->Invalidate();
             break;
         }
         case GENERATE_BUTTON: {
-            aggView->GeneratePoints();
-            aggView->Invalidate();
+            circlesView->GeneratePoints();
+            circlesView->Invalidate();
             break;
         }
         case M_QUIT_APP: {

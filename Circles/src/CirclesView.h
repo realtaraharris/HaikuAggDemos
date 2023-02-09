@@ -1,5 +1,9 @@
-#ifndef ELLIPSE_H
-#define ELLIPSE_H
+/*
+ * Copyright 2023, Tara Harris <3769985+realtaraharris@users.noreply.github.com>
+ * All rights reserved. Distributed under the terms of the MIT license.
+ */
+#ifndef CIRCLESVIEW_H
+#define CIRCLESVIEW_H
 
 #include <View.h>
 #include <Bitmap.h>
@@ -24,19 +28,10 @@ struct ScatterPoint {
     agg::rgba color;
 };
 
-static double splineRX[] = { 0.000000, 0.200000, 0.400000, 0.910484, 0.957258, 1.000000 };
-static double splineRY[] = { 1.000000, 0.800000, 0.600000, 0.066667, 0.169697, 0.600000 };
-
-static double splineGX[] = { 0.000000, 0.292244, 0.485655, 0.564859, 0.795607, 1.000000 };
-static double splineGY[] = { 0.000000, 0.607260, 0.964065, 0.892558, 0.435571, 0.000000 };
-
-static double splineBX[] = { 0.000000, 0.055045, 0.143034, 0.433082, 0.764859, 1.000000 };
-static double splineBY[] = { 0.385480, 0.128493, 0.021416, 0.271507, 0.713974, 1.000000 };
-
-class AGGView : public BView {
+class CirclesView : public BView {
 public:
-    AGGView(BRect rect);
-    ~AGGView();
+    CirclesView(BRect rect);
+    ~CirclesView();
 //  void AttachedToWindow();
 //  void DetachedFromWindow();
     void InitBitmapAndBuffer();
@@ -65,4 +60,4 @@ private:
     agg::rendering_buffer buffer;
 };
 
-#endif // ELLIPSE_H
+#endif // CIRCLESVIEW_H

@@ -9,7 +9,7 @@ include_directories("/boot/system/develop/headers/agg2/")
 add_executable(Circles
 	src/App.cpp
 	src/MainWindow.cpp
-	src/AGGView.cpp
+	src/CirclesView.cpp
 	src/SmoothSlider.cpp
 )
 

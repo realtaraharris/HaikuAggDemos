@@ -1,6 +1,21 @@
+/*
+ * Copyright 2023, Tara Harris <3769985+realtaraharris@users.noreply.github.com>
+ * Portions copyright 2002-2006 Maxim Shemanarev
+ * All rights reserved. Distributed under the terms of the MIT license.
+ */
 #include <iostream>
+
 #include <Bitmap.h>
-#include "AGGView.h"
+#include "CirclesView.h"
+
+static double splineRX[] = { 0.000000, 0.200000, 0.400000, 0.910484, 0.957258, 1.000000 };
+static double splineRY[] = { 1.000000, 0.800000, 0.600000, 0.066667, 0.169697, 0.600000 };
+
+static double splineGX[] = { 0.000000, 0.292244, 0.485655, 0.564859, 0.795607, 1.000000 };
+static double splineGY[] = { 0.000000, 0.607260, 0.964065, 0.892558, 0.435571, 0.000000 };
+
+static double splineBX[] = { 0.000000, 0.055045, 0.143034, 0.433082, 0.764859, 1.000000 };
+static double splineBY[] = { 0.385480, 0.128493, 0.021416, 0.271507, 0.713974, 1.000000 };
 
 double randomDouble(double start, double end) {
     unsigned r = rand() & 0x7FFF;
@@ -15,8 +30,8 @@ void attachBufferToBBitmap(agg::rendering_buffer& buffer, BBitmap* bitmap) {
     buffer.attach(bits, width, height, -bpr);
 }
 
-AGGView::AGGView(BRect rect) :
-	BView(rect, "AGG View", B_FOLLOW_ALL_SIDES, B_FRAME_EVENTS | B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE),
+CirclesView::CirclesView(BRect rect) :
+	BView(rect, "Circles View", B_FOLLOW_ALL_SIDES, B_FRAME_EVENTS | B_WILL_DRAW | B_FULL_UPDATE_ON_RESIZE),
 	pointCount(2000),
 	circleDiameter(20),
 	selectivity(0),
@@ -37,11 +52,11 @@ AGGView::AGGView(BRect rect) :
     InitBitmapAndBuffer();
 }
 
-AGGView::~AGGView() {
+CirclesView::~CirclesView() {
     delete [] scatterPoints;
 }
 
-void AGGView::InitBitmapAndBuffer() {
+void CirclesView::InitBitmapAndBuffer() {
     retainedBitmap = new BBitmap(currentRect, 0, B_RGBA32);
     if (retainedBitmap->IsValid()) {
         attachBufferToBBitmap(buffer, retainedBitmap);
@@ -52,34 +67,34 @@ void AGGView::InitBitmapAndBuffer() {
 }
 
 /*
-void AGGView::AttachedToWindow() {
+void CirclesView::AttachedToWindow() {
    if (Parent()) {
       SetViewColor(Parent()->ViewColor());
     }
     BView::AttachedToWindow();
 }
 
-void AGGView::DetachedFromWindow() {}
+void CirclesView::DetachedFromWindow() {}
 */
 
-void AGGView::Draw(BRect updateRect) {
+void CirclesView::Draw(BRect updateRect) {
     RenderCircles(updateRect);
     DrawBitmap(retainedBitmap, updateRect, updateRect);
 }
 
 // this is never actually called in this example because nothing moves the view frame
-void AGGView::FrameMoved(BPoint newLocation) {
+void CirclesView::FrameMoved(BPoint newLocation) {
     currentRect.SetLeftTop(newLocation);
 }
 
-void AGGView::FrameResized(float width, float height) {
+void CirclesView::FrameResized(float width, float height) {
     currentRect.SetRightBottom(initialRect.LeftTop() + BPoint(width, height));
     SetTransAffineResizingMatrix(width + 1, height + 1, true);
     InitBitmapAndBuffer(); // do this before drawing
     Draw(currentRect);
 }
 
-void AGGView::GeneratePoints() {
+void CirclesView::GeneratePoints() {
     double width = initialRect.Width();
     double height = initialRect.Height();
     double rx = width / 3.5;
@@ -102,7 +117,7 @@ void AGGView::GeneratePoints() {
     }
 }
 
-void AGGView::SetTransAffineResizingMatrix(unsigned width, unsigned height, bool keepAspectRatio) {
+void CirclesView::SetTransAffineResizingMatrix(unsigned width, unsigned height, bool keepAspectRatio) {
     if (keepAspectRatio) {
         agg::trans_viewport vp;
         vp.preserve_aspect_ratio(0.5, 0.5, agg::aspect_ratio_meet);
@@ -116,11 +131,11 @@ void AGGView::SetTransAffineResizingMatrix(unsigned width, unsigned height, bool
     }
 }
 
-const agg::trans_affine& AGGView::GetTransAffineResizingMatrix() const {
+const agg::trans_affine& CirclesView::GetTransAffineResizingMatrix() const {
     return resizeMatrix;
 }
 
-void AGGView::RenderCircles(BRect rect) {
+void CirclesView::RenderCircles(BRect rect) {
     agg::rasterizer_scanline_aa<> pf;
     agg::scanline_p8 sl;
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2023, Tara Harris <3769985+realtaraharris@users.noreply.github.com>
+ * All rights reserved. Distributed under the terms of the MIT license.
+ */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -5,7 +9,7 @@
 #include <MenuBar.h>
 #include <Button.h>
 
-#include "AGGView.h"
+#include "CirclesView.h"
 #include "SmoothSlider.h"
 
 class MainWindow : public BWindow {
@@ -20,7 +24,7 @@ private:
     SmoothSlider *sizeSlider;
     SmoothSlider *selectivitySlider;
     BButton *generateButton;
-    AGGView* aggView;
+    CirclesView* circlesView;
 };
 
 #endif

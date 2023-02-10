@@ -25,7 +25,9 @@ MainWindow::MainWindow(void) :
     menuBar = new BMenuBar(rect, "menubar");
     AddChild(menuBar);
 
-    BMenu *menu = new BMenu("File");
+    BMenu *menu = new BMenu("App");
+    menu->AddItem(new BMenuItem("Add Points", new BMessage(M_ADD_POINTS), 'A'));
+    menu->AddItem(new BMenuItem("Subtract Points", new BMessage(M_SUB_POINTS), 'S'));
     menu->AddItem(new BMenuItem("Quit", new BMessage(M_QUIT_APP), 'Q'));
     menuBar->AddItem(menu);
 
@@ -38,9 +40,6 @@ MainWindow::MainWindow(void) :
     rect.Set(0, 0, 1, 1);
     selectivitySlider = new SmoothSlider(rect, NULL, "Selectivity", new BMessage(SELECTIVITY_SLIDER), 0, 100, B_TRIANGLE_THUMB);
 
-    rect.Set(0, 0, 1, 1);
-    generateButton = new BButton(rect, NULL, "Generate Points", new BMessage(GENERATE_BUTTON));
-
     mainWindowRect = Bounds();
 
     BBox* divider = new BBox(BRect(0, 0, 1, 1), B_EMPTY_STRING, B_FOLLOW_ALL_SIDES, B_WILL_DRAW | B_FRAME_EVENTS, B_FANCY_BORDER);
@@ -51,7 +50,6 @@ MainWindow::MainWindow(void) :
         .Add(BGroupLayoutBuilder(B_VERTICAL)
             .Add(sizeSlider)
             .Add(selectivitySlider)
-            .Add(generateButton)
             .SetInsets(5, 5, 5, 5)
         )
     );
@@ -69,8 +67,13 @@ void MainWindow::MessageReceived(BMessage *message) {
             circlesView->Invalidate();
             break;
         }
-        case GENERATE_BUTTON: {
-            circlesView->GeneratePoints();
+        case M_ADD_POINTS: {
+            circlesView->ChangePointCount(1000);
+            circlesView->Invalidate();
+            break;
+        }
+        case M_SUB_POINTS: {
+            circlesView->ChangePointCount(-1000);
             circlesView->Invalidate();
             break;
         }

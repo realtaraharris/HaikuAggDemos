@@ -5,8 +5,10 @@
 #ifndef CIRCLESVIEW_H
 #define CIRCLESVIEW_H
 
-#include <View.h>
+#include <cstdio>
+
 #include <Bitmap.h>
+#include <View.h>
 
 #include "agg_rendering_buffer.h"
 #include "agg_rasterizer_scanline_aa.h"
@@ -30,23 +32,19 @@ struct ScatterPoint {
 
 class CirclesView : public BView {
 public:
-    CirclesView(BRect rect);
-    ~CirclesView();
-//  void AttachedToWindow();
-//  void DetachedFromWindow();
-    void InitBitmapAndBuffer();
-    void Draw(BRect updateRect);
-    void FrameMoved(BPoint newLocation);
-    void FrameResized(float width, float height);
-    const agg::trans_affine& GetTransAffineResizingMatrix() const;
-    void SetTransAffineResizingMatrix(unsigned width, unsigned height, bool keepAspectRatio);
-    void GeneratePoints();
-    void RenderCircles(BRect rect);
-
     unsigned circleDiameter;
     unsigned selectivity;
     unsigned z1;
     unsigned z2;
+
+    CirclesView(BRect rect);
+    ~CirclesView();
+//  void AttachedToWindow();
+//  void DetachedFromWindow();
+    void Draw(BRect updateRect);
+    void FrameMoved(BPoint newLocation);
+    void FrameResized(float width, float height);
+	void ChangePointCount(int delta);
 private:
     unsigned pointCount;
     ScatterPoint* scatterPoints;
@@ -58,6 +56,12 @@ private:
     agg::trans_affine resizeMatrix;
     BBitmap* retainedBitmap;
     agg::rendering_buffer buffer;
+
+    void GeneratePoints();
+    void InitBitmapAndBuffer();
+    const agg::trans_affine& GetTransAffineResizingMatrix() const;
+    void SetTransAffineResizingMatrix(unsigned width, unsigned height, bool keepAspectRatio);
+    void RenderCircles(BRect rect);
 };
 
 #endif // CIRCLESVIEW_H

@@ -3,9 +3,6 @@
  * Portions copyright 2002-2006 Maxim Shemanarev
  * All rights reserved. Distributed under the terms of the MIT license.
  */
-#include <iostream>
-
-#include <Bitmap.h>
 #include "CirclesView.h"
 
 static double splineRX[] = { 0.000000, 0.200000, 0.400000, 0.910484, 0.957258, 1.000000 };
@@ -53,7 +50,7 @@ CirclesView::CirclesView(BRect rect) :
 }
 
 CirclesView::~CirclesView() {
-    delete [] scatterPoints;
+    delete []scatterPoints;
 }
 
 void CirclesView::InitBitmapAndBuffer() {
@@ -66,16 +63,9 @@ void CirclesView::InitBitmapAndBuffer() {
     }
 }
 
-/*
-void CirclesView::AttachedToWindow() {
-   if (Parent()) {
-      SetViewColor(Parent()->ViewColor());
-    }
-    BView::AttachedToWindow();
-}
+//void CirclesView::AttachedToWindow() {}
 
-void CirclesView::DetachedFromWindow() {}
-*/
+//void CirclesView::DetachedFromWindow() {}
 
 void CirclesView::Draw(BRect updateRect) {
     RenderCircles(updateRect);
@@ -133,6 +123,21 @@ void CirclesView::SetTransAffineResizingMatrix(unsigned width, unsigned height, 
 
 const agg::trans_affine& CirclesView::GetTransAffineResizingMatrix() const {
     return resizeMatrix;
+}
+
+void CirclesView::ChangePointCount(int delta) {
+	if (pointCount > 0) {
+		delete []scatterPoints;
+	}
+
+	const int newPointCount = pointCount + delta;
+	if (newPointCount > 0) {
+		pointCount = newPointCount;
+		scatterPoints = new ScatterPoint[pointCount];
+		GeneratePoints();
+	} else {
+		pointCount = 0;
+	}
 }
 
 void CirclesView::RenderCircles(BRect rect) {

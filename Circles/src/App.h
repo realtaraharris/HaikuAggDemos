@@ -13,11 +13,11 @@ public:
 };
 
 enum {
-    ASDF='asf',
-    M_QUIT_APP='mqa',
     SIZE_SLIDER='sizs',
     SELECTIVITY_SLIDER='sels',
-    GENERATE_BUTTON='gbtn'
+    M_ADD_POINTS='apts',
+    M_SUB_POINTS='spts',
+    M_QUIT_APP='mqap'
 };
 
 #endif

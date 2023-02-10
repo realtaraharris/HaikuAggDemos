@@ -1,5 +1,5 @@
 # Circles Example
-![](../HaikuAggExamples/Circles/Circles.png)
+![](./Circles.png)
 
 ## Building
 

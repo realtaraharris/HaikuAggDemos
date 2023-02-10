@@ -19,7 +19,7 @@
 #include "CirclesView.h"
 
 MainWindow::MainWindow(void) :
-    BWindow(BRect(100, 100, 400, 600), "Main Window", B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS, B_CURRENT_WORKSPACE) {
+    BWindow(BRect(100, 100, 400, 600), "Circles", B_TITLED_WINDOW, B_ASYNCHRONOUS_CONTROLS, B_CURRENT_WORKSPACE) {
     BRect rect(Bounds());
 
     menuBar = new BMenuBar(rect, "menubar");

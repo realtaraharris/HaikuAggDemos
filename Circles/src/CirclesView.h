@@ -34,7 +34,7 @@ class CirclesView : public BView {
 public:
     unsigned circleDiameter;
     unsigned selectivity;
-    unsigned z1;
+    unsigned z1; // these are the range values to hook up to a range selector someday
     unsigned z2;
 
     CirclesView(BRect rect);

@@ -23,6 +23,8 @@
 #include "agg_pixfmt_rgba.h"
 #include "agg_trans_viewport.h"
 
+#include "PngIo.h"
+
 struct ScatterPoint {
     double x;
     double y;
@@ -45,6 +47,7 @@ public:
     void FrameMoved(BPoint newLocation);
     void FrameResized(float width, float height);
 	void ChangePointCount(int delta);
+	void SaveToPng();
 private:
     unsigned pointCount;
     ScatterPoint* scatterPoints;

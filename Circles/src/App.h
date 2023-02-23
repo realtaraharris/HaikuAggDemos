@@ -17,6 +17,7 @@ enum {
     SELECTIVITY_SLIDER='sels',
     M_ADD_POINTS='apts',
     M_SUB_POINTS='spts',
+    M_WRITE_PNG='wpng',
     M_QUIT_APP='mqap'
 };
 

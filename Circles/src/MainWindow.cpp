@@ -28,6 +28,7 @@ MainWindow::MainWindow(void) :
     BMenu *menu = new BMenu("App");
     menu->AddItem(new BMenuItem("Add Points", new BMessage(M_ADD_POINTS), 'A'));
     menu->AddItem(new BMenuItem("Subtract Points", new BMessage(M_SUB_POINTS), 'S'));
+    menu->AddItem(new BMenuItem("Write to Png", new BMessage(M_WRITE_PNG), 'P'));
     menu->AddItem(new BMenuItem("Quit", new BMessage(M_QUIT_APP), 'Q'));
     menuBar->AddItem(menu);
 
@@ -75,6 +76,10 @@ void MainWindow::MessageReceived(BMessage *message) {
         case M_SUB_POINTS: {
             circlesView->ChangePointCount(-1000);
             circlesView->Invalidate();
+            break;
+        }
+        case M_WRITE_PNG: {
+            circlesView->SaveToPng();
             break;
         }
         case M_QUIT_APP: {

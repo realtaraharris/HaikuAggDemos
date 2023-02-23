@@ -201,3 +201,7 @@ void CirclesView::RenderCircles(BRect rect) {
     pf.add_path(textOutline);
     agg::render_scanlines_aa_solid(pf, sl, rb, agg::rgba(0, 0, 0));
 }
+
+void CirclesView::SaveToPng() {
+	writePng(retainedBitmap, "CirclesOutput.png");
+}

@@ -11,11 +11,12 @@ add_executable(Circles
 	src/MainWindow.cpp
 	src/CirclesView.cpp
 	src/SmoothSlider.cpp
+	src/PngIo.cpp
 )
 
 set_property(TARGET Circles PROPERTY CXX_STANDARD 11)
 
-target_link_libraries(Circles be agg translation)
+target_link_libraries(Circles be agg png)
 
 add_custom_command(TARGET Circles POST_BUILD
 	COMMAND rc -o Resources.rsrc ${CMAKE_SOURCE_DIR}/Resources.rdef

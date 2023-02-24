@@ -203,5 +203,5 @@ void CirclesView::RenderCircles(BRect rect) {
 }
 
 void CirclesView::SaveToPng() {
-	writePng(retainedBitmap, "CirclesOutput.png");
+	writePng(&buffer, "CirclesOutput.png");
 }

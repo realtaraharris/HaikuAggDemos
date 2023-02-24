@@ -17,6 +17,8 @@
 #include <InterfaceDefs.h>
 #include <SupportDefs.h>
 
-int writePng(BBitmap *bitmap, char* outFilename);
+#include "agg_rendering_buffer.h"
+
+int writePng(agg::rendering_buffer* bitmap, char* outFilename);
 
 #endif // PNGIO_H
